@@ -9,12 +9,12 @@ def do_ride(data, max_steps, cur_steps, point):
         cur_steps += n[1]
         ind = n[0]
         if cur_steps > max_steps:
-            return "finish", point
+            return "finish", point, cur_steps
         cur = data[n[0]][2:4]
         point += 25
         del data[n[0]]
-        if len(data) - 10 < n[0] < len(data):
-            return 'finish', point, cur_steps
+        if len(data) - 3 < n[0] < len(data):
+            return 'finish', point, cur_steps, data
 
 
 def best_option(cur, data, cur_steps, index_last_ride):
@@ -69,7 +69,7 @@ def check(cur, data, cur_steps):
 def next_coordinate(cur_position, next_ride, time_cur, time_next):
     """Check if we can take next ride"""
     # cur_position and next_ride is lst = [x,y]
-    if abs(next_ride[0] - cur_position[0]) + abs(next_ride[1] - cur_position[1]) > time_next - time_cur:
+    if abs(next_ride[0] - cur_position[0]) + abs(next_ride[1] - cur_position[1]) <= time_next - time_cur:
         return False
     else:
         return True
