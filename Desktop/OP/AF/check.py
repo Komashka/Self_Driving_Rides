@@ -7,17 +7,17 @@ def do_ride(data, cur_steps, point):
     while True:
         search_data = current_data(cur_steps, data)
         if search_data == 1:
-            return 'finish', point, cur_steps
+            return data, cur_steps, point
         n = best_option(cur, search_data[0], cur_steps, ind)
         cur_steps += n[1]
-        print(data[n[0] + search_data[1]])
+        # print(data[n[0] + search_data[1]])
 
         ind = n[0]
         cur = search_data[0][n[0]][2:4]
         point += 25
         del data[n[0] + search_data[1]]
         if n[0] >= len(data) - 5:
-            return 'finish', point, cur_steps, data
+            return data, cur_steps, point
 
 
 def best_option(cur, data, cur_steps, index_last_ride):
@@ -105,5 +105,15 @@ with open("/Users/daradzhala/Desktop/OP/AF/qualification_round_2018.in/b_should_
     data = data_
 
 # print(data)
+lst =[]
 l = do_ride(data, 0, 0)
-print(l)
+points = 0
+lst.append(l[0])
+points+=l[2]
+for i in range(100):
+    q = do_ride(lst[i], 0, 0)
+    lst.append(q[0])
+    points += q[2]
+
+print(points)
+
