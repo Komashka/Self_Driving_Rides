@@ -35,12 +35,15 @@ def best_option(cur, data, cur_steps, index_last_ride):
             # length of the distance from current point to start of ride and to the end of the ride
             l = abs(data[i][0] - cur[0]) + abs(data[i][1] - cur[1]) + abs(data[i][2] - data[i][0]) + abs(
                 data[i][3] - data[i][1]) + data[i][4] - abs(data[i][0] - cur[0]) + abs(data[i][1] - cur[1])
-            if i == 0:
+            if best_length == 0:
                 best_index = i
                 best_length = l
             elif best_length > l:
                 best_index = i
                 best_length = l
+    # print(abs(data[best_index][2:4][0] - cur[0]) + abs(data[best_index][1] - cur[1]), data[best_index][4]- cur_steps)
+    # print("best idex", best_index)
+    # print("best_length", best_length)
     return best_index, best_length
 
 
@@ -53,7 +56,7 @@ def check(cur, data, cur_steps):
     end = False
     lst = []
     for i in range(len(data)):
-        if next_coordinate(cur, data[i][2:4], cur_steps, data[i][4]):
+        if next_coordinate(cur, data[i][2:4], cur_steps, data[i][4]) == 1:
             if lst is False:
                 l = abs(data[i][0] - cur[0]) + abs(data[i][1] - cur[1]) + abs(data[i][2] - data[i][0]) + abs(
                     data[i][3] - data[i][1]) + data[4] - abs(data[i][0] - cur[0]) + abs(data[i][1] - cur[1])
@@ -73,9 +76,10 @@ def next_coordinate(cur_position, next_ride, time_cur, time_next):
     """Check if we can take next ride"""
     # cur_position and next_ride is lst = [x,y]
     if abs(next_ride[0] - cur_position[0]) + abs(next_ride[1] - cur_position[1]) <= time_next - time_cur:
-        return False
+        return 1
     else:
-        return True
+        return 0
+
 
 
 def current_data(curr_steps, data):
