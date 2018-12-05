@@ -1,19 +1,22 @@
-def do_ride(data, max_steps, cur_steps, point):
+def do_ride(data, cur_steps, point):
     cur = data[0][2:4]
     ind = 0
     point += 25
     cur_steps += data[0][4] + abs(data[0][2] - data[0][0]) + abs(data[0][3] - data[0][1])
     del data[0]
     while True:
-        n = best_option(cur, data, cur_steps, ind)
+        search_data = current_data(cur_steps, data)
+        if search_data == 1:
+            return 'finish', point, cur_steps
+        n = best_option(cur, search_data[0], cur_steps, ind)
         cur_steps += n[1]
+        print(data[n[0] + search_data[1]])
+
         ind = n[0]
-        if cur_steps > max_steps:
-            return "finish", point, cur_steps
-        cur = data[n[0]][2:4]
+        cur = search_data[0][n[0]][2:4]
         point += 25
-        del data[n[0]]
-        if len(data) - 3 < n[0] < len(data):
+        del data[n[0] + search_data[1]]
+        if n[0] >= len(data) - 5:
             return 'finish', point, cur_steps, data
 
 
@@ -75,19 +78,28 @@ def next_coordinate(cur_position, next_ride, time_cur, time_next):
         return True
 
 
+def current_data(curr_steps, data):
+    """
+    Change data set according to time
+    """
+    for i in range(len(data)):
+        if data[i][4] > curr_steps:
+            return data[i:], i
+    return 1
+
 
 data = []
 with open("/Users/daradzhala/Desktop/OP/AF/qualification_round_2018.in/b_should_be_easy.in") as file:
-        data = file.readlines()
-        del data[0]
-        data_ = []
-        for line in data:
-            data_.append([int(x) for x in line.split(" ")])
-        data_.sort(key=lambda x: x[4])
-        # print(data_)
-        # data -> [518, 656, 201, 494, 186, 712]
-        data = data_
+    data = file.readlines()
+    del data[0]
+    data_ = []
+    for line in data:
+        data_.append([int(x) for x in line.split(" ")])
+    data_.sort(key=lambda x: x[4])
+    # print(data_)
+    # data -> [518, 656, 201, 494, 186, 712]
+    data = data_
 
 # print(data)
-l = do_ride(data, 25000, 0, 0)
+l = do_ride(data, 0, 0)
 print(l)
