@@ -1,22 +1,22 @@
-def main(data):
+def main(data, points):
     cur = data[0][2:4]
-    point = 25
+    point = points
     cur_steps = data[0][4] + abs(data[0][2] - data[0][0]) + abs(data[0][3] - data[0][1])
     del data[0]
     while True:
         cur_data = current_data(cur_steps, data)
         if cur_data == 1:
-            return data, cur_steps, point
+            return data, point
         n = shortest(cur_data[0], cur, cur_steps)
         if n[0] == 0 and n[1] == 0:
-            return data, cur_steps, point
+            return data, point
         cur_steps += n[1]
         # print(data[n[0] + search_data[1]])
         cur = cur_data[0][n[0]][2:4]
-        point += 25
+        point += points
         del data[n[0] + cur_data[1]]
         if n[0] >= len(data) - 5:
-            return data, cur_steps, point
+            return data, point
 
 
 def shortest(cur_data, cur, steps):
@@ -35,9 +35,9 @@ def shortest(cur_data, cur, steps):
                 short = i
                 short_len = l
     shortest_distance = abs(cur_data[short][0] - cur[0]) + abs(cur_data[short][1] - cur[1]) + abs(
-                cur_data[short][2] - cur_data[short][0]) + abs(
-                cur_data[short][3] - cur_data[short][1]) + cur_data[short][4] - abs(cur_data[short][0] - cur[0]) + abs(
-                cur_data[short][1] - cur[1])
+        cur_data[short][2] - cur_data[short][0]) + abs(
+        cur_data[short][3] - cur_data[short][1]) + cur_data[short][4] - abs(cur_data[short][0] - cur[0]) + abs(
+        cur_data[short][1] - cur[1])
     return short, shortest_distance
 
 
@@ -59,27 +59,29 @@ def current_data(curr_steps, data):
             return data[i:], i
     return 1
 
-
-with open("/Users/daradzhala/Desktop/OP/AF/qualification_round_2018.in/b_should_be_easy.in") as file:
+cars = 0
+points = 0
+with open("/Users/daradzhala/Desktop/OP/AF/qualification_round_2018.in/d_metropolis.in") as file:
+    my_line = file.readline()
+    my_line = my_line.split(" ")
+    cars = int(my_line[2])
+    points = int(my_line[4])
     data = file.readlines()
     del data[0]
     data_ = []
     for line in data:
         data_.append([int(x) for x in line.split(" ")])
-    data_.sort(key=lambda x: x[4])
+    # data_.sort(key=lambda x: x[4])
     # data -> [518, 656, 201, 494, 186, 712]
     data = data_
 
-main(data)
+total_points = 0
+for i in range(cars):
+    if len(data) < 1:
+        break
+    l = main(data, points)
+    data = l[0]
+    total_points+=l[1]
 
-lst = []
-l = main(data)
-points = 0
-lst.append(l[0])
-points += l[2]
-for i in range(100):
-    q = main(lst[i])
-    lst.append(q[0])
-    points += q[2]
-
-print(points)
+print(len(data))
+print(total_points)

@@ -1,25 +1,26 @@
-def do_ride(data, cur_steps, point):
+def main(data, points):
+
     cur = data[0][2:4]
     ind = 0
-    point += 25
-    cur_steps += data[0][4] + abs(data[0][2] - data[0][0]) + abs(data[0][3] - data[0][1])
+    point = points
+    cur_steps = data[0][4] + abs(data[0][2] - data[0][0]) + abs(data[0][3] - data[0][1])
     del data[0]
     while True:
         search_data = current_data(cur_steps, data)
         if search_data == 1:
-            return data, cur_steps, point
+            return data, point
         n = best_option(cur, search_data[0], cur_steps, ind)
         if n == 1:
-            return data, cur_steps, point
+            return data, point
         cur_steps += n[1]
         # print(data[n[0] + search_data[1]])
 
         ind = n[0]
         cur = search_data[0][n[0]][2:4]
-        point += 25
+        point += points
         del data[n[0] + search_data[1]]
         if n[0] >= len(data) - 5:
-            return data, cur_steps, point
+            return data,point
 
 
 def best_option(cur, data, cur_steps, index_last_ride):
@@ -70,15 +71,32 @@ with open("/Users/daradzhala/Desktop/OP/AF/qualification_round_2018.in/b_should_
     # data -> [518, 656, 201, 494, 186, 712]
     data = data_
 
-# print(data)
-lst = []
-l = do_ride(data, 0, 0)
-points = 0
-lst.append(l[0])
-points += l[2]
-for i in range(100):
-    q = do_ride(lst[i], 0, 0)
-    lst.append(q[0])
-    points += q[2]
 
-print(points)
+cars = 0
+points = 0
+with open("/Users/daradzhala/Desktop/OP/AF/qualification_round_2018.in/e_high_bonus.in") as file:
+    my_line = file.readline()
+    my_line = my_line.split(" ")
+    cars = int(my_line[2])
+    points = int(my_line[4])
+    data = file.readlines()
+    del data[0]
+    data_ = []
+    for line in data:
+        data_.append([int(x) for x in line.split(" ")])
+    data_.sort(key=lambda x: x[4])
+    # data -> [518, 656, 201, 494, 186, 712]
+    data = data_
+
+
+
+total_points = 0
+for i in range(cars):
+    if len(data) < 1:
+        break
+    l = main(data, points)
+    data = l[0]
+    total_points+=l[1]
+
+print(len(data))
+print(total_points)
