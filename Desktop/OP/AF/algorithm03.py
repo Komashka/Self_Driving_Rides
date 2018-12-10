@@ -1,7 +1,11 @@
+import time
+
+
 def main(data, points):
     cur = data[0][2:4]
     ind = 0
     point = points
+    point += abs(data[0][2] - data[0][0]) + abs(data[0][3] - data[0][1])
     cur_steps = data[0][4] + abs(data[0][2] - data[0][0]) + abs(data[0][3] - data[0][1])
     del data[0]
     while True:
@@ -10,14 +14,21 @@ def main(data, points):
             return data, point
         n = best_option(cur, search_data[0], cur_steps, ind)
         cur_steps += n[1]
-        # print(data[n[0] + search_data[1]])
-
         ind = n[0]
         cur = search_data[0][n[0]][2:4]
-        point += points
+
+        point += total_point(points, data[n[0] + search_data[1]])
+        print(n[0])
         del data[n[0] + search_data[1]]
         if n[0] >= len(data) - 5:
             return data, point
+
+
+def total_point(points, ride):
+    """Total points per one ride"""
+    # rise-> [x1, y1, x2, y2, earliest start, latest finish ]
+    our_points = abs(ride[2] - ride[0]) + abs(ride[3] - ride[1]) + points
+    return our_points
 
 
 def best_option(cur, data, cur_steps, index_last_ride):
@@ -28,6 +39,7 @@ def best_option(cur, data, cur_steps, index_last_ride):
     end = check(cur, data, cur_steps)
     best_index = 0
     best_length = 0
+    best_length1 = 0
     if index_last_ride == 0:
         index_last_ride = 0
     for i in range(int(index_last_ride), end):
@@ -35,15 +47,15 @@ def best_option(cur, data, cur_steps, index_last_ride):
             # length of the distance from current point to start of ride and to the end of the ride
             l = abs(data[i][0] - cur[0]) + abs(data[i][1] - cur[1]) + abs(data[i][2] - data[i][0]) + abs(
                 data[i][3] - data[i][1]) + data[i][4] - abs(data[i][0] - cur[0]) + abs(data[i][1] - cur[1])
+            l_1 =  abs(data[i][2] - data[i][0]) + abs(data[i][3] - data[i][1])
             if best_length == 0:
                 best_index = i
                 best_length = l
-            elif best_length > l:
+                best_length1= l_1
+            elif best_length1 < l_1:
                 best_index = i
                 best_length = l
-    # print(abs(data[best_index][2:4][0] - cur[0]) + abs(data[best_index][1] - cur[1]), data[best_index][4]- cur_steps)
-    # print("best idex", best_index)
-    # print("best_length", best_length)
+                best_length1= l_1
     return best_index, best_length
 
 
@@ -55,7 +67,11 @@ def check(cur, data, cur_steps):
     # lst[length of ride, finish point, number of steps in the end of ride]
     end = False
     lst = []
-    for i in range(len(data)):
+
+    k = len(data)
+    if len(data) > 200:
+        k = 200
+    for i in range(k):
         if next_coordinate(cur, data[i][2:4], cur_steps, data[i][4]) == 1:
             if lst is False:
                 l = abs(data[i][0] - cur[0]) + abs(data[i][1] - cur[1]) + abs(data[i][2] - data[i][0]) + abs(
@@ -69,7 +85,11 @@ def check(cur, data, cur_steps):
                 l = abs(data[i][0] - cur[0]) + abs(data[i][1] - cur[1]) + abs(data[i][2] - data[i][0]) + abs(
                     data[i][3] - data[i][1]) + data[i][4] - abs(data[i][0] - cur[0]) + abs(data[i][1] - cur[1])
                 lst.append([l, data[i][2:4], cur_steps + l])
-    return len(data)
+    print("searching on first 50 rides")
+    if len(data) >= 150:
+        return 150
+    else:
+        return len(data)
 
 
 def next_coordinate(cur_position, next_ride, time_cur, time_next):
@@ -79,7 +99,6 @@ def next_coordinate(cur_position, next_ride, time_cur, time_next):
         return 1
     else:
         return 0
-
 
 
 def current_data(curr_steps, data):
@@ -92,6 +111,7 @@ def current_data(curr_steps, data):
     return 1
 
 
+start_time = time.time()
 cars = 0
 points = 0
 with open("/Users/daradzhala/Desktop/OP/AF/qualification_round_2018.in/d_metropolis.in") as file:
@@ -119,3 +139,5 @@ for i in range(cars):
 
 print(len(data))
 print(total_points)
+end = time.time()
+print("Time: ", end - start_time)

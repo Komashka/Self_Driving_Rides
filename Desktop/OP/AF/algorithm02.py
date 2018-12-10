@@ -1,3 +1,4 @@
+# найближчий по відстані
 def main(data, points):
     cur = data[0][2:4]
     point = points
@@ -7,23 +8,22 @@ def main(data, points):
         cur_data = current_data(cur_steps, data)
         if cur_data == 1:
             return data, point
-        n = shortest(cur_data[0], cur, cur_steps)
+        n = best(cur_data[0], cur, cur_steps)
         if n[0] == 0 and n[1] == 0:
             return data, point
         cur_steps += n[1]
-        # print(data[n[0] + search_data[1]])
         cur = cur_data[0][n[0]][2:4]
-        point += points
+        point += points + abs(data[n[0] + cur_data[1]][2] - data[n[0] + cur_data[1]][0]) + abs(data[n[0] + cur_data[1]][3] - data[n[0] + cur_data[1]][1])
         del data[n[0] + cur_data[1]]
         if n[0] >= len(data) - 5:
             return data, point
 
 
-def shortest(cur_data, cur, steps):
+def best(cur_data, cur, steps):
     short = 0
     short_len = 0
-    end = 20
-    if len(cur_data) < 20:
+    end = 6
+    if len(cur_data) < 6:
         end = len(cur_data)
     for i in range(end):
         if next_coordinate(cur, cur_data[i][2:4], steps, cur_data[i][4]):
@@ -31,7 +31,7 @@ def shortest(cur_data, cur, steps):
             if short == 0:
                 short = i
                 short_len = l
-            elif l < short_len:
+            elif l > short_len:
                 short = i
                 short_len = l
     shortest_distance = abs(cur_data[short][0] - cur[0]) + abs(cur_data[short][1] - cur[1]) + abs(
